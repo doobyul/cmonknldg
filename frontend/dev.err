@@ -1,0 +1,19 @@
+'npm'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는
+배치 파일이 아닙니다.
+Error: spawn npm ENOENT
+    at notFoundError (C:\VSCode\CmonKnldg\frontend\node_modules\next\dist\compiled\cross-spawn\index.js:1:557)
+    at verifyENOENT (C:\VSCode\CmonKnldg\frontend\node_modules\next\dist\compiled\cross-spawn\index.js:1:936)
+    at e.emit (C:\VSCode\CmonKnldg\frontend\node_modules\next\dist\compiled\cross-spawn\index.js:1:791)
+    at ChildProcess._handle.onexit (node:internal/child_process:294:12) {
+  code: 'ENOENT',
+  errno: 'ENOENT',
+  syscall: 'spawn npm',
+  path: 'npm',
+  spawnargs: [
+    'install',
+    '--save-exact',
+    '--save-dev',
+    '@types/react',
+    '@types/node'
+  ]
+}
