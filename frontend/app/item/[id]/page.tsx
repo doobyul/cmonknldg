@@ -4,6 +4,7 @@ import React from 'react'
 
 import ItemProgress from '../../../components/ItemProgress'
 import ItemNav from '../../../components/ItemNav'
+import KeywordContent from '../../../components/KeywordContent'
 
 type ItemType = {
   id?: string
@@ -16,12 +17,49 @@ type ItemType = {
 export default function ItemPage({ params }: { params: { id: string } }) {
   const { id } = params
   const dataPath = path.resolve(process.cwd(), '..', 'data', 'books.json')
+  const dictPath = path.resolve(process.cwd(), '..', 'data', 'dictionary.txt')
   let item: ItemType | null = null
   let chapterMeta: { chapterNo?: any; chapterName?: string } | null = null
   let sectionMeta: { sectionNo?: any; sectionName?: string } | null = null
+  let internalIndex: Record<string, { id: string; label: string }[]> = {}
+  let dictionaryKeywords: string[] = []
+
+  const normalizeTerm = (v: string) => (v || '').trim().toLowerCase().replace(/[^가-힣a-z0-9]/gi, '')
+
+  const addIndex = (term: string, target: { id: string; label: string }) => {
+    const key = normalizeTerm(term)
+    if (!key || key.length < 2) return
+    if (!internalIndex[key]) internalIndex[key] = []
+    if (!internalIndex[key].some(t => t.id === target.id)) internalIndex[key].push(target)
+  }
+
   try {
     const raw = fs.readFileSync(dataPath, 'utf8')
     const book = JSON.parse(raw)
+
+    // 1) dictionary keyword list (one line = one keyword)
+    if (fs.existsSync(dictPath)) {
+      const dictRaw = fs.readFileSync(dictPath, 'utf8')
+      dictionaryKeywords = dictRaw
+        .split(/\r?\n/)
+        .map(v => v.trim())
+        .filter(v => v && !v.startsWith('#'))
+    }
+
+    // 2) fallback auto index from itemName/reference
+    for (const ch of (book.chapters || [])) {
+      for (const sec of (ch.sections || [])) {
+        for (const it of (sec.items || [])) {
+          const label = `${it.itemNo ? `${it.itemNo}. ` : ''}${it.itemName || it.id}`
+          addIndex(String(it.itemName || ''), { id: String(it.id || ''), label })
+
+          for (const r of (it.references || [])) {
+            addIndex(String(r?.name || ''), { id: String(it.id || ''), label })
+          }
+        }
+      }
+    }
+
     for (let ci = 0; ci < (book.chapters || []).length; ci++) {
       const ch = book.chapters[ci]
       for (let si = 0; si < (ch.sections || []).length; si++) {
@@ -82,11 +120,7 @@ export default function ItemPage({ params }: { params: { id: string } }) {
 
       <section style={{ marginBottom: 18 }}>
         {item.contents && item.contents.length ? (
-          <div>
-            {item.contents.map((c, idx) => (
-              <p key={idx} style={{ margin: '8px 0', fontSize: 16, whiteSpace: 'pre-wrap' }}>{c}</p>
-            ))}
-          </div>
+          <KeywordContent contents={item.contents} internalIndex={internalIndex} dictionaryKeywords={dictionaryKeywords} />
         ) : (
           <p>내용이 없습니다.</p>
         )}

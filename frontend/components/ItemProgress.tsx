@@ -33,12 +33,14 @@ export default function ItemProgress({ id }: { id: string }) {
     }
   }
 
+  const navLikeBtnStyle: React.CSSProperties = { padding: '10px 14px', fontSize: 16 }
+
   if (progress >= 100) {
     return (
       <div style={{ margin: '12px 0' }}>
         <div style={{ fontWeight: 700 }}>완료</div>
         <div style={{ marginTop: 8 }}>
-          <button onClick={() => goToNext(false)}>다음 항목으로 이동</button>
+          <button onClick={() => goToNext(false)} style={navLikeBtnStyle}>다음 항목으로 이동</button>
         </div>
       </div>
     )
@@ -50,8 +52,8 @@ export default function ItemProgress({ id }: { id: string }) {
         <div>
           <div style={{ marginBottom: 8 }}>해당 내용을 숙지하셨나요?</div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={() => { goToNext(true) }} style={{ fontWeight: 700 }}>예</button>
-            <button onClick={() => { setAsking(false); setConfirmNext(true) }}>아니오</button>
+            <button onClick={() => { goToNext(true) }} style={{ ...navLikeBtnStyle, fontWeight: 700 }}>예</button>
+            <button onClick={() => { setAsking(false); setConfirmNext(true) }} style={navLikeBtnStyle}>아니오</button>
           </div>
         </div>
       ) : null}
@@ -60,8 +62,8 @@ export default function ItemProgress({ id }: { id: string }) {
         <div style={{ marginTop: 10 }}>
           <div style={{ marginBottom: 8 }}>다음 항목으로 넘어가시겠습니까?</div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={() => goToNext(false)} style={{ fontWeight: 700 }}>예</button>
-            <button onClick={() => setConfirmNext(false)}>아니오</button>
+            <button onClick={() => goToNext(false)} style={{ ...navLikeBtnStyle, fontWeight: 700 }}>예</button>
+            <button onClick={() => setConfirmNext(false)} style={navLikeBtnStyle}>아니오</button>
           </div>
         </div>
       ) : null}
