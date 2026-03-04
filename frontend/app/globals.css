@@ -1,0 +1,7 @@
+:root {
+  --bg: #fff;
+  --fg: #111;
+}
+html,body { height:100%; margin:0; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--bg); color:var(--fg); }
+
+a { color: inherit; text-decoration: none }
