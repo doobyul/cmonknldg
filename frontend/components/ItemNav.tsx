@@ -6,14 +6,22 @@ export default function ItemNav({ id }: { id: string }) {
   const [nextId, setNextId] = useState<string | null>(null)
 
   useEffect(() => {
+    // remember the latest item user is currently viewing
+    try {
+      localStorage.setItem('cmon:last', id)
+      localStorage.setItem('cmon:lastAt', String(Date.now()))
+    } catch (e) {
+      // ignore
+    }
+
     // fetch prev/next ids
     fetch(`/api/prev?id=${encodeURIComponent(id)}`).then(r => r.json()).then(j => setPrevId(j.prevId || null)).catch(() => setPrevId(null))
     fetch(`/api/next?id=${encodeURIComponent(id)}`).then(r => r.json()).then(j => setNextId(j.nextId || null)).catch(() => setNextId(null))
 
     // intercept browser back button to always go to /book (parent list)
     const onPop = (e: PopStateEvent) => {
-      // navigate to book tree
-      window.location.href = '/book'
+      // navigate to home (initial screen)
+      window.location.href = '/'
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
@@ -22,7 +30,7 @@ export default function ItemNav({ id }: { id: string }) {
   return (
     <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
       <div>
-        <button onClick={() => (window.location.href = '/book')} style={{ padding: '10px 14px', fontSize: 16 }}>뒤로(목록)</button>
+        <button onClick={() => (window.location.href = '/')} style={{ padding: '10px 14px', fontSize: 16 }}>뒤로(홈)</button>
       </div>
 
       <div style={{ display: 'flex', gap: 8 }}>

@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import Link from 'next/link'
+import BookFocus from '../../components/BookFocus'
 
 export default function BookPage() {
   const dataPath = path.resolve(process.cwd(), '..', 'data', 'books.json')
@@ -18,7 +19,13 @@ export default function BookPage() {
   )
 
   return (
-    <div>
+    <main style={{ maxWidth: 720, margin: '0 auto', padding: '16px', boxSizing: 'border-box' }}>
+      <div style={{ marginBottom: 12 }}>
+        <Link href="/" style={{ display: 'inline-block', padding: '10px 14px', fontSize: 16, border: '1px solid #ccc', borderRadius: 6 }}>
+          뒤로(홈)
+        </Link>
+      </div>
+      <BookFocus />
       <h2>{book.title || 'Book Tree'}</h2>
       {visibleChapters && visibleChapters.length ? (
         <div>
@@ -31,7 +38,7 @@ export default function BookPage() {
                     <strong>{sec.sectionName || `Section ${si + 1}`}</strong>
                     <ul>
                       {sec.items?.map((it: any, ii: number) => (
-                        <li key={ii}>
+                        <li key={ii} id={`item-${it.id}`}>
                           <Link href={`/item/${it.id}`}>{`${it.itemNo || (ii + 1)}. ${it.itemName || `Item ${ii + 1}`}`}</Link>
                         </li>
                       ))}
@@ -45,6 +52,6 @@ export default function BookPage() {
       ) : (
         <p>No book data found. Run the converter to generate `data/books.json`.</p>
       )}
-    </div>
+    </main>
   )
 }
